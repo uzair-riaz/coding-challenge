@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import {Card, Avatar, Pagination, Spin} from 'antd';
-import {Navbar, Container} from 'react-bootstrap';
 import LineChart from '../components/LineChart';
+import Navbar from '../components/Navbar';
 
 const {Meta} = Card;
 const pageSize = 9;
@@ -42,12 +42,7 @@ class Stats extends React.Component {
         const {users, fetching} = this.state;
 
         return <React.Fragment>
-            <section className="nav-section clearfix">
-                <a className="fa fa-lg fa-bars float-left" style={{color: 'white'}}>
-                    <span className="ml-5">User Dashboard</span>
-                </a>
-                <input className="float-right" placeholder="Search"/>
-            </section>
+            <Navbar/>
             <ul className="nav nav-pills m-2">
                 {sortFilters.map(option => {
                     return <li className="nav-item">
@@ -84,13 +79,14 @@ class Stats extends React.Component {
                     })}
                 </div>
             </Spin>
+            {this.state.total > 0 &&
             <Pagination className="float-right m-2"
                         defaultCurrent={1}
                         pageSize={pageSize}
                         total={this.state.total}
                         showSizeChanger={false}
                         onChange={page => this.setState({page}, this.fetch)}
-            />
+            />}
         </React.Fragment>
     }
 }
