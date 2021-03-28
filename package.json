@@ -29,8 +29,9 @@
   },
   "dependencies": {
     "antd": "^4.14.1",
-    "react-bootstrap": "^1.5.2",
-    "react-charts": "*"
+    "highcharts-react-official": "^3.0.0",
+    "performance-now": "^2.1.0",
+    "react-bootstrap": "^1.5.2"
   },
   "babel": {
     "plugins": [
