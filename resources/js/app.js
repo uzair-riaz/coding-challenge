@@ -14,4 +14,5 @@ require('./bootstrap');
 
 require('./components/Stats');
 
-import "antd/dist/antd.css";
+import '../css/app.css';
+import 'antd/dist/antd.css';

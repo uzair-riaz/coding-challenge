@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "antd": "^4.14.1",
+    "font-awesome": "^4.7.0",
     "highcharts-react-official": "^3.0.0",
     "performance-now": "^2.1.0",
     "react-bootstrap": "^1.5.2"
