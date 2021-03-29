@@ -17,7 +17,6 @@ class Stats extends React.Component {
         page: 1,
         total: 0,
         fetching: false,
-        sortBy: 'name'
     };
 
     componentDidMount() {
@@ -25,8 +24,9 @@ class Stats extends React.Component {
     }
 
     fetch = () => {
+        const {sortBy} = this.state;
         this.setState({fetching: true});
-        axios.get(`/api/stats?sortBy=${this.state.sortBy}&page=${this.state.page}&size=${pageSize}`)
+        axios.get(`/api/stats?${sortBy ? `sortBy=${sortBy}` : ''}&page=${this.state.page}&size=${pageSize}`)
             .then(({data}) => this.setState({users: data.data, total: data.total}))
             .catch(err => console.log(err))
             .then(() => this.setState({fetching: false}));
@@ -36,7 +36,7 @@ class Stats extends React.Component {
         if (sortBy !== this.state.sortBy) {
             this.setState({sortBy: sortBy.toLowerCase()}, this.fetch);
         }
-    }
+    };
 
     render() {
         const {users, fetching} = this.state;

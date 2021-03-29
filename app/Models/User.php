@@ -45,26 +45,29 @@ class User extends Authenticatable
     ];
 
     // override this function in case of database as data source
-    public static function paginate($skip, $take, $sortBy = 'name')
+    public static function paginate($skip, $take, $sortBy = null)
     {
         $content = file_get_contents(storage_path('json\users.json'));
         $users = collect(json_decode($content, true));
         $grouped = UserLog::forUserIds($users->pluck('id'))->groupBy('user_id');
 
         $models = collect();
-        collect($users)->sortByDesc(function ($user) use ($grouped, $sortBy) {
-            $userLogs = $grouped->get($user['id']);
+        collect($users)->when($sortBy, function ($collection) use ($grouped, $sortBy) {
+            return $collection->sortBy(function ($user) use ($grouped, $sortBy) {
+                $userLogs = $grouped->get($user['id']);
 
-            switch ($sortBy) {
-                case 'impressions':
-                    return $userLogs->where('type','impression')->count();
-                case 'conversions':
-                    return $userLogs->where('type','conversion')->count();
-                case 'revenue':
-                    return round($userLogs->sum('revenue'), 2);
-            }
+                switch ($sortBy) {
+                    case 'impressions':
+                        return $userLogs->where('type', 'impression')->count();
+                    case 'conversions':
+                        return $userLogs->where('type', 'conversion')->count();
+                    case 'revenue':
+                        return round($userLogs->sum('revenue'), 2);
+                }
 
-            return $sortBy;
+                return $user['name'];
+
+            }, SORT_REGULAR, $sortBy !== 'name');
         })
             ->skip($skip)
             ->take($take)
