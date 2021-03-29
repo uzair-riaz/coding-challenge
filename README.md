@@ -8,6 +8,12 @@
 <code>npm install</code>
 </li>
 <li>
+In the project folder, copy <code>.env.example</code> and rename it to <code>.env</code>
+</li>
+<li>
+<code>php artisan key:generate</code>
+</li>
+<li>
 <code>npm run dev</code>
 </li>
 <li>
