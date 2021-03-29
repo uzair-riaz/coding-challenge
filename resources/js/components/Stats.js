@@ -17,7 +17,7 @@ class Stats extends React.Component {
         page: 1,
         total: 0,
         fetching: false,
-        sortBy: 'Name'
+        sortBy: 'name'
     };
 
     componentDidMount() {
@@ -34,7 +34,7 @@ class Stats extends React.Component {
 
     onClick = sortBy => {
         if (sortBy !== this.state.sortBy) {
-            this.setState({sortBy}, this.fetch);
+            this.setState({sortBy: sortBy.toLowerCase()}, this.fetch);
         }
     }
 
@@ -46,7 +46,7 @@ class Stats extends React.Component {
             <ul className="nav nav-pills m-2">
                 {sortFilters.map(option => {
                     return <li className="nav-item">
-                        <a className={`nav-link ${option === this.state.sortBy ? 'active' : ''}`}
+                        <a className={`nav-link ${option.toLowerCase() === this.state.sortBy ? 'active' : ''}`}
                            onClick={() => this.onClick(option)}>{option}</a>
                     </li>
                 })}
@@ -54,6 +54,8 @@ class Stats extends React.Component {
             <Spin spinning={fetching}>
                 <div className="row">
                     {users.map(user => {
+                        const dates = Object.keys(user.chartData);
+
                         return <div className="col-md-4">
                             <Card className="m-2">
                                 <Meta avatar={<Avatar src={user.avatar}>{user.name.charAt(0)}</Avatar>}
@@ -61,7 +63,8 @@ class Stats extends React.Component {
                                       description={user.occupation}/>
                                 <div className="row mt-1">
                                     <div className="col-md-9">
-                                        <LineChart chartData={user.chartData}/>
+                                        <LineChart data={user.chartData}/><br/>
+                                        <strong>Conversions {dates[0]} - {dates[dates.length - 1]}</strong>
                                     </div>
                                     <div className="col-md-3">
                                         <div className="float-right text-right">

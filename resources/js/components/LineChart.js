@@ -3,7 +3,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
 export default function LineChart(props) {
-    const {chartData} = props;
+    const {data} = props;
 
     const options = {
         title: {
@@ -28,10 +28,10 @@ export default function LineChart(props) {
         },
         series: [{
             name: 'Conversions',
-            data: Object.keys(chartData).map(key => {
-                const conversions = chartData[key].filter(item => item.type === 'conversion').length;
+            data: Object.keys(data).map(key => {
+                const conversions = data[key].filter(item => item.type === 'conversion').length;
 
-                return [parseInt(key), conversions];
+                return [key, conversions];
             })
         }]
     }

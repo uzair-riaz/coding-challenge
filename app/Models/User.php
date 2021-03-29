@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -42,4 +43,50 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // override this function in case of database as data source
+    public static function paginate($skip, $take, $sortBy = 'name')
+    {
+        $content = file_get_contents(storage_path('json\users.json'));
+        $users = collect(json_decode($content, true));
+        $grouped = UserLog::forUserIds($users->pluck('id'))->groupBy('user_id');
+
+        $models = collect();
+        collect($users)->sortByDesc(function ($user) use ($grouped, $sortBy) {
+            $userLogs = $grouped->get($user['id']);
+
+            switch ($sortBy) {
+                case 'impressions':
+                    return $userLogs->where('type','impression')->count();
+                case 'conversions':
+                    return $userLogs->where('type','conversion')->count();
+                case 'revenue':
+                    return round($userLogs->sum('revenue'), 2);
+            }
+
+            return $sortBy;
+        })
+            ->skip($skip)
+            ->take($take)
+            ->each(function ($attributes) use ($grouped, &$models) {
+                $user = new User($attributes);
+                $user->id = $attributes['id'];
+
+                $userLogs = $grouped->get($user->id);
+                $user->revenue = round($userLogs->sum('revenue'), 2);
+                $user->impressions = $userLogs->where('type', 'impression')->count();
+                $user->conversions = $userLogs->where('type', 'conversion')->count();
+                $user->chartData = $userLogs->sortBy('time')
+                    ->groupBy(function ($item) {
+                        return Carbon::parse($item['time'])->format('d/m');
+                    });
+
+                $models->add($user);
+            });
+
+        return [
+            'total' => $users->count(),
+            'data' => $models
+        ];
+    }
 }
