@@ -26,7 +26,7 @@ class Stats extends React.Component {
     fetch = () => {
         const {sortBy} = this.state;
         this.setState({fetching: true});
-        axios.get(`/api/stats?${sortBy ? `sortBy=${sortBy}` : ''}&page=${this.state.page}&size=${pageSize}`)
+        axios.get(`/api/stats?${sortBy ? `sortBy=${sortBy}&` : ''}page=${this.state.page}&size=${pageSize}`)
             .then(({data}) => this.setState({users: data.data, total: data.total}))
             .catch(err => console.log(err))
             .then(() => this.setState({fetching: false}));
