@@ -78,11 +78,19 @@ class User extends Authenticatable
                 $userLogs = $grouped->get($user->id);
                 $user->revenue = round($userLogs->sum('revenue'), 2);
                 $user->impressions = $userLogs->where('type', 'impression')->count();
-                $user->conversions = $userLogs->where('type', 'conversion')->count();
-                $user->chartData = $userLogs->sortBy('time')
+
+                $conversions = $userLogs->where('type', 'conversion');
+                $user->conversions = $conversions->count();
+
+                $chartData = [];
+                $conversions->sortBy('time')
                     ->groupBy(function ($item) {
                         return Carbon::parse($item['time'])->format('d/m');
+                    })
+                    ->each(function ($item, $date) use (&$chartData) {
+                        $chartData[$date] = collect($item)->count();
                     });
+                $user->chartData = $chartData;
 
                 $models->add($user);
             });

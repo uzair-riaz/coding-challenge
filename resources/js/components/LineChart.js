@@ -28,11 +28,7 @@ export default function LineChart(props) {
         },
         series: [{
             name: 'Conversions',
-            data: Object.keys(data).map(key => {
-                const conversions = data[key].filter(item => item.type === 'conversion').length;
-
-                return [key, conversions];
-            })
+            data: Object.keys(data).map(key => [key, data[key]])
         }]
     }
 
